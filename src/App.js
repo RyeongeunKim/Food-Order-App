@@ -13,12 +13,33 @@ function App() {
 
   const hideCartHandler = () => {
     setCartIsShown(false);
-  }
+  };
+
+  const addMealHandler = (meals) => {
+    (async () => {
+      for (const meal of meals) {
+        const response = await fetch(
+          "https://food-order-app-3a471-default-rtdb.firebaseio.com/orderMeals.json",
+          {
+            method: "POST",
+            body: JSON.stringify(meal),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        console.log(data);
+      }
+    })();
+  };
 
   return (
     <CartProvider>
-      {cartIsShown && <Cart onClose={hideCartHandler}/>}
-      <Header onShowCart={showCartHandler}/>
+      {cartIsShown && (
+        <Cart onClose={hideCartHandler} onAddMeal={addMealHandler} />
+      )}
+      <Header onShowCart={showCartHandler} />
       <main>
         <Meals />
       </main>
