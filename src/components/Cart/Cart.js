@@ -34,6 +34,31 @@ const Cart = (props) => {
     </ul>
   );
 
+  const addMealHandler = () => {
+    (async () => {
+      for (const meal of cartCtx.items) {
+        const response = await fetch(
+          "https://food-order-app-3a471-default-rtdb.firebaseio.com/orderMeals.json",
+          {
+            method: "POST",
+            body: JSON.stringify(meal),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = await response.json();
+        if (data && data.name) {
+          console.log("data = ", data);
+          cartCtx.removeItem(meal.id);
+        }
+        if (!cartCtx.items.length) {
+          props.onClose();
+        }
+      }
+    })();
+  };
+
   return (
     <Modal onClose={props.onClose}>
       {cartItem}
@@ -45,7 +70,11 @@ const Cart = (props) => {
         <button className={classes["button--alt"]} onClick={props.onClose}>
           Close
         </button>
-        {hasItems && <button className={classes.button}>Order</button>}
+        {hasItems && (
+          <button className={classes.button} onClick={addMealHandler}>
+            Order
+          </button>
+        )}
       </div>
     </Modal>
   );
